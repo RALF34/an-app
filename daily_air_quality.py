@@ -108,7 +108,7 @@ comparison = st.checkbox(
 if comparison:
     new_station = st.selectbox(
         "Select a station",
-        queries.get_stations(pollutant)
+        queries.get_stations(pollutant),
         index=None,
         placeholder="")
     if new_station:
