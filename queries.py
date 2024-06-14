@@ -1,4 +1,4 @@
-from datetime import date, strptime, timedelta
+from datetime import date, datetime, timedelta
 
 import pandas as pd
 import streamlit as st
@@ -52,7 +52,7 @@ def load_data():
         # negative values.)
         data = data[data["valeur brute"]>0]
         data["hour"] = data["Date de début"].apply(
-            lambda x: strptime(x, "%Y/%m/%d %H:%M:%S").hour)
+            lambda x: datetime.strptime(x, "%Y/%m/%d %H:%M:%S").hour)
         data = data[["nom site","Polluant","hour","valeur brute"]]
         latest_data = data.groupby(["nom site","Polluant"])
     else:
