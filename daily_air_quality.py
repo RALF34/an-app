@@ -10,9 +10,9 @@ import visualization
 with st.spinner("Loading data..."):
     _ = queries.load_data()
 
-st.title("Daily air pollution")
+st.title("Daily air quality in France")
 st.write('''
-    ### Select a place in France
+    ### Select your place
     Identify the air quality monitoring station whose pollution data you are interested in.
     ''')
     
@@ -94,15 +94,20 @@ if station:
                     format="DD/MM/YY")
                 y_values = get_values(boundaries)
                 if not(np.array(st.session_state["current_data"][:2]).any()):
-                    st.error("No pollution data are available for the given period.")
+                    st.error("No pollution data recorded during the given period.")
                 else:
                     st.pyplot(visualization.plot(y_values,pollutant))
             with col2:
                 latest_data = checkbox("Show values recorded yesterday")
-                if latest_data:
-                    col1.pyplot(visualization.plot(
-                        y_values+[queries.get_latest_data()],
-                        pollutant))
+                if latest_data: 
+                    if queries.get_latest_data(station, pollutant):
+                        col1.pyplot(
+                            visualization.plot(
+                                y_values+[queries.get_latest_data(station, pollutant)],
+                                pollutant))
+                    else:
+                        st.error("No pollution data recorded yesterday.")
+                
 comparison = st.checkbox(
     "Do you want to compare this state of air pollution against others elsewhere in France?")
 if comparison:
@@ -128,10 +133,11 @@ if comparison:
                 format="DD/MM/YY")
             new_y_values = get_values(boundaries, comparison=True)
             if not(np.array(st.session_state["current_data"][2:]).any()):
-                st.error("No pollution data are available for the given period.")
+                st.error("No pollution data recorded during the given period.")
             else:
                 i = parts.index(part_of_the_week)
-                st.pyplot(visualization.plot(
-                    [y_values[i],new_y_values[i]],
-                    pollutant,
-                    comparing=" ".join(station,new_station,str(i))))
+                st.pyplot(
+                    visualization.plot(
+                        [y_values[i],new_y_values[i]],
+                        pollutant,
+                        comparing=" ".join(station,new_station,str(i))))

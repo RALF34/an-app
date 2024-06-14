@@ -118,13 +118,16 @@ def get_data(s, p):
     return result
 
 def get_latest_data(s, p):
-    df = dictionary["latest_data"].get_group(
-        (s, p)).set_index("hour")
-    dictionary = {str(x) for x in range(24)}
-    for hour in data.index:
-        dictionary[str(hour)] = df.at["hour","valeur brute"]
-    return list(dictionary.values())
+    if dictionary["latest_data"]:
+        df = dictionary["latest_data"].get_group(
+            (s, p)).set_index("hour")
+        dictionary = {str(x): 0 for x in range(24)}
+        for hour in data.index:
+            dictionary[str(hour)] = df.at["hour","valeur brute"]
+        return list(dictionary.values())
+    else:
+        return None
 
 def get_stations(pollutant):
-    return = dictionary["distribution_cities"].get_group(
+    return dictionary["distribution_cities"].get_group(
         pollutant)["station"].sort_values()
