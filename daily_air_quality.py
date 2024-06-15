@@ -63,7 +63,10 @@ with col1:
         queries.get_items("departments", department),
         **kwargs)
     
-    station = st.selectbox("Select a station", stations, **kwargs)
+    station = st.selectbox(
+        "Select a station",
+        queries.get_items("cities", city),
+        **kwargs)
 
 kargs = queries.get_params(region, department, city, station)
 col2.map(**kargs)
