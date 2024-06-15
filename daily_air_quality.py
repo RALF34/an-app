@@ -45,7 +45,6 @@ def get_values(boundaries, comparison=False):
     return y_values
     
 col1, col2 = st.columns((0.4,0.6))
-col2.map(queries.COORDINATES)
 with col1:
     kwargs = {"index": None, "placeholder": ""}
         
@@ -63,11 +62,11 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    stations = queries.get_items("cities",city)
-    col2.map(queries.get_coordinates(stations))
     
     station = st.selectbox("Select a station", stations, **kwargs)
-    col2.map(queries.get_coordinates(station))
+
+kargs = queries.get_params(region, department, city, station)
+col2.map(**kargs)
 
 if station:
     if station not in queries.STATIONS:

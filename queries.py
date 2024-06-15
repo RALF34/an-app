@@ -69,8 +69,6 @@ def load_data():
         "latest_data": latest_data}
 
 dictionary = load_data()
-COORDINATES = dictionary["coordinates"]
-STATIONS = COORDINATES.index.values
 
 def get_items(where, group):
     '''
@@ -99,8 +97,22 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_coordinates(stations):
-    return dictionary["coordinates"].loc[stations]
+def get_params(region, department, city, station):
+    df = dictionary["coordinates"]
+    if not(region):
+        if department:
+            stations = get_items(
+                "cities",
+                get_items("departments", department))
+            size = 100
+        if city:
+            stations, size = get_items("cities",city), 60
+        if station:
+            stations, size = [station], 40
+        data = df.loc[stations]
+    else:
+        data, size = df, 100
+    return {"data": data, "size": size}
 
 def get_data(s, p):
     '''
