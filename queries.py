@@ -15,7 +15,7 @@ OVERSEAS_DEPARTMENTS = [
 def load_data():
     locations = pd.read_csv("data/location_data.csv")
     coordinates = locations.set_index("station")[
-        ["Latitude","Longitude"]]
+        ["latitude","longitude"]]
     regions = locations[
         ["region","department"]].groupby("region")
     departments = locations[
