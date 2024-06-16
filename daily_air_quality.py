@@ -87,6 +87,8 @@ if station:
             for i, gb in enumerate([e.groupby("hour") for e in data]):
                 st.session_state["current_data"][i] = gb
             col1, col2 = st.columns((0.9,0.1))
+            with col2:
+                latest_data = st.checkbox("Show values recorded yesterday")
             with col1:
                 boundaries = st.slider(
                     "Set the analysis period",
@@ -98,18 +100,10 @@ if station:
                 if not(np.array(st.session_state["current_data"][:2]).any()):
                     st.error("No pollution data recorded during the given period.")
                 else:
+                    if latest_data:
+                        y_values += [queries.get_latest_data(station, pollutant)]
                     st.pyplot(visualization.plot(y_values,pollutant))
-            with col2:
-                latest_data = checkbox("Show values recorded yesterday")
-                if latest_data: 
-                    if queries.get_latest_data(station, pollutant):
-                        col1.pyplot(
-                            visualization.plot(
-                                y_values+[queries.get_latest_data(station, pollutant)],
-                                pollutant))
-                    else:
-                        st.error("No pollution data recorded yesterday.")
-                
+
 comparison = st.checkbox(
     "Do you want to compare this state of air pollution against others elsewhere in France?")
 if comparison:

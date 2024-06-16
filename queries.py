@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -69,6 +70,7 @@ def load_data():
         "latest_data": latest_data}
 
 dictionary = load_data()
+STATIONS = dictionary["distribution_pollutants"].index.values
 
 def get_items(where, group):
     '''
@@ -99,19 +101,18 @@ def get_items(where, group):
 
 def get_params(region, department, city, station):
     df = dictionary["coordinates"]
-    if not(region):
+    data, size = df, 100
+    if np.array([region, department, city, station]).any():
         if department:
             stations = get_items(
                 "cities",
                 get_items("departments", department))
             size = 100
         if city:
-            stations, size = get_items("cities",city), 60
+            stations, size = get_items("cities", city), 60
         if station:
             stations, size = [station], 40
         data = df.loc[stations]
-    else:
-        data, size = df, 100
     return {"data": data, "size": size}
 
 def get_data(s, p):
@@ -130,15 +131,15 @@ def get_data(s, p):
     return result
 
 def get_latest_data(s, p):
+    values = [0]*24
     if dictionary["latest_data"]:
         df = dictionary["latest_data"].get_group(
             (s, p)).set_index("hour")
         dictionary = {str(x): 0 for x in range(24)}
-        for hour in data.index:
+        for hour in df.index:
             dictionary[str(hour)] = df.at["hour","valeur brute"]
-        return list(dictionary.values())
-    else:
-        return None
+        values = list(dictionary.values())
+    return values
 
 def get_stations(pollutant):
     return dictionary["distribution_cities"].get_group(
