@@ -70,7 +70,7 @@ def load_data():
         "latest_data": latest_data}
 
 dictionary = load_data()
-STATIONS = dictionary["distribution_pollutants"].index.values
+STATIONS = dictionary["distribution_pollutants"].groups.keys()
 
 def get_items(where, group):
     '''
