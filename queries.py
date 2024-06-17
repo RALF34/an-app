@@ -1,6 +1,5 @@
 from datetime import date, datetime, timedelta
 
-import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -99,20 +98,18 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_params(region, department, city, station):
+def get_params(department, city, station):
     df = dictionary["coordinates"]
-    data, size = df, 100
-    if np.array([department, city, station]).any():
-        if department:
-            stations = []
-            for city in get_items("departments", department):
-                stations += get_items("cities", city)
-            size = 100
-        if city:
-            stations, size = get_items("cities", city), 60
-        if station:
-            stations, size = [station], 40
-        data = df.loc[stations]
+    stations, size = [], 100
+    if department:
+        for city in get_items("departments", department):
+            stations += get_items("cities", city)
+        size = 100
+    if city:
+        stations, size = get_items("cities", city), 60
+    if station:
+        stations, size = [station], 40
+    data = df if not(stations) else df.loc[stations]
     return {"data": data, "size": size}
 
 def get_data(s, p):
