@@ -104,9 +104,9 @@ def get_params(region, department, city, station):
     data, size = df, 100
     if np.array([department, city, station]).any():
         if department:
-            stations = get_items(
-                "cities",
-                get_items("departments", department))
+            stations = []
+            for city in get_items("departments", department):
+                stations += get_items("cities", city)
             size = 100
         if city:
             stations, size = get_items("cities", city), 60
