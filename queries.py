@@ -115,8 +115,9 @@ def get_params(region, department, city, station):
                 stations += get_items("cities", city)
         size = 80
     else:
-        continue
-    data = df if not(stations) else df.loc[stations]
+        data = df 
+    if stations:
+        data = df.loc[stations]
     return {"data": data, "size": size}
 
 def get_data(s, p):
