@@ -68,7 +68,7 @@ with col1:
         queries.get_items("cities", city),
         **kwargs)
 
-kwargs = queries.get_params(region, department, city, station)
+kwargs = queries.get_params(department, city, station)
 col2.map(**kwargs)
 
 if station:
