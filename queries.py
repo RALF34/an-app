@@ -30,12 +30,12 @@ def load_data():
     columns = data.columns[:-1]
     business_days = data[data["business day"]][columns]
     weekends = data[data["weekend"]][columns]
-    distribution_pollutants = working_days[
+    distribution_pollutants = business_days[
         ["station","pollutant"]].groupby("station")
-    distribution_cities = working_days[
+    distribution_cities = business_days[
         ["pollutant","station"]].groupby("pollutant")
     columns = ["station","pollutant"]
-    working_days = working_days.groupby(columns)
+    business_days = business_days.groupby(columns)
     weekends = weekends.groupby(columns)
      
     d = date.today()-timedelta(days=1)
@@ -64,8 +64,8 @@ def load_data():
         "departments": departments,
         "cities": cities,
         "distribution_pollutants": distribution_pollutants,
-       "distribution_cities": distribution_cities,
-        "working_days": working_days,
+        "distribution_cities": distribution_cities,
+        "business_days": business_days,
         "weekends": weekends,
         "latest_data": latest_data}
 
@@ -121,7 +121,7 @@ def get_data(s, p):
     containing hourly average air concentrations of pollutant "p" 
     recorded by station "s" on both working_days and weekends.
     '''
-    x, y  = dictionary["working_days"], dictionary["weekends"]
+    x, y  = dictionary["business_days"], dictionary["weekends"]
     result = []
     for data in [x, y]:
         try:
