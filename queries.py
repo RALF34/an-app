@@ -98,17 +98,24 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_params(department, city, station):
+def get_params(region, department, city, station):
     df = dictionary["coordinates"]
     stations, size = [], 100
-    if department:
+    if station:
+        stations, size = [station], 15
+    elif city:
+        stations, size = get_items("cities", city), 40
+    elif department:
         for city in get_items("departments", department):
             stations += get_items("cities", city)
-        size = 100
-    if city:
-        stations, size = get_items("cities", city), 60
-    if station:
-        stations, size = [station], 40
+        size = 60
+    elif region:
+        for department in get_items("regions", region):
+            for city in get_items("departments", department):
+                stations += get_items("cities", city)
+        size = 80
+    else:
+        continue
     data = df if not(stations) else df.loc[stations]
     return {"data": data, "size": size}
 

@@ -68,8 +68,8 @@ with col1:
         queries.get_items("cities", city),
         **kwargs)
 
-kwargs = queries.get_params(department, city, station)
-col2.map(**kwargs)
+map_kwargs = queries.get_params(department, city, station)
+col2.map(**map_kwargs)
 
 if station:
     if station not in queries.STATIONS:
