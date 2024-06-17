@@ -28,8 +28,8 @@ def load_data():
         list_of_df.append(pd.read_csv(f"data/dataset_{x}.csv"))
     data = pd.concat(list_of_df, ignore_index=True)
     columns = data.columns[:-1]
-    working_days = data[data["working day"]][columns]
-    weekends = data[data["working day"]==False][columns]
+    business_days = data[data["business day"]][columns]
+    weekends = data[data["weekend"]][columns]
     distribution_pollutants = working_days[
         ["station","pollutant"]].groupby("station")
     distribution_cities = working_days[
@@ -64,7 +64,7 @@ def load_data():
         "departments": departments,
         "cities": cities,
         "distribution_pollutants": distribution_pollutants,
-        "distribution_cities": distribution_cities,
+       "distribution_cities": distribution_cities,
         "working_days": working_days,
         "weekends": weekends,
         "latest_data": latest_data}
@@ -102,7 +102,7 @@ def get_items(where, group):
 def get_params(region, department, city, station):
     df = dictionary["coordinates"]
     data, size = df, 100
-    if np.array([region, department, city, station]).any():
+    if np.array([department, city, station]).any():
         if department:
             stations = get_items(
                 "cities",

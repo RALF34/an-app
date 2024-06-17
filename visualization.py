@@ -28,7 +28,7 @@ def plot(
     # Plot the data using either a continuous line (if all the 24
     # values are different from zero) or points.
     l = list(zip(
-        ["Working days","Weekends","Yesterday"],
+        ["Business days","Weekends","Yesterday"],
         ["dodgerblue","cyan","peru"]))
     if comparing:
         station_A, station_B, i = comparing.split()
