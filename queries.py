@@ -93,7 +93,7 @@ def get_items(where, group):
                 items = OVERSEAS_DEPARTMENTS
         else:
             data = data.get_group(group)
-            items = data.iloc[:,1].unique()
+            items = data.iloc[:,1].unique().tolist()
             if where == "distribution_pollutants":
                 items = [e+" pollution" for e in items]
     return items
