@@ -100,7 +100,7 @@ def get_items(where, group):
 
 def get_params(region, department, city, station):
     df = dictionary["coordinates"]
-    stations, size = [], 100
+    stations, size = [], None
     if station:
         stations, size = [station], 15
     elif city:
@@ -113,7 +113,6 @@ def get_params(region, department, city, station):
         for department in get_items("regions", region):
             for city in get_items("departments", department):
                 stations += get_items("cities", city)
-        size = 80
     else:
         data = df 
     if stations:
