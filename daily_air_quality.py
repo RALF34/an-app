@@ -25,7 +25,7 @@ def get_values(boundaries, comparison=False):
     start, end = boundaries
     data = st.session_state["current_data"][:2] if not(comparison) else \
     st.session_state["current_data"][2:]
-    for i, group_by in data:
+    for i, group_by in enumerate(data):
         if group_by:
             # Initialize "dictionary" which will contain the average
             # concentration values (set to zero when no data are
@@ -67,8 +67,8 @@ with col1:
         queries.get_items("cities", city),
         **kwargs)
 
-map_kwargs = queries.get_params(region, department, city, station)
-col2.map(**map_kwargs)
+if region or (region == "OUTRE MER" and department):
+    col2.map(queries.get_coordinates(region, department, city, station))
 
 if station:
     if station not in queries.STATIONS:
