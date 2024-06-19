@@ -98,15 +98,12 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_arguments(region, department, city, station):
+def get_arguments(region, department, stations, selected_station=None):
     df = dictionary["coordinates"]
     displayed_stations = []
-    if station:
-        displayed_stations.append(station)
-        size, zoom = 24, 17
-    elif city:
-        displayed_stations += get_items("cities", city)
-        size, zoom = 40, 11
+    color = (247,0,0)
+    if stations:
+        displayed_stations = stations
     elif department:
         for x in get_items("departments", department):
             displayed_stations += get_items("cities", x)
@@ -114,8 +111,14 @@ def get_arguments(region, department, city, station):
         for x in get_items("regions", region):
             for y in get_items("departments", x):
                 displayed_stations += get_items("cities", y)
-    kwargs = None if not(city or station) else {"size": size, "zoom": zoom}
-    return df.loc[displayed_stations], kwargs
+    df = df.loc[displayed_stations]
+    if selected_station:
+        a = df.index.values
+        df["color"] = pd.Series(np.where(a==selected_station,(0,247,0),color))
+    else:
+        df["color"] = pd.Series([color]*df.shape[0])
+    return df
+
 
 def get_data(s, p):
     '''

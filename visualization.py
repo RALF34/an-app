@@ -30,7 +30,7 @@ def plot(
     l = list(zip(
         ["Business days","Weekends","Yesterday"],
         ["dodgerblue","cyan","peru"]))
-    if comparing:
+    if comparison:
         station_A, station_B, i = comparing.split()
         color = "navy" if not(int(i)) else "cadetblue"
         l = [(station_A,l[i][1]),(station_B,color)]

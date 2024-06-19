@@ -61,20 +61,23 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    
-    station = st.selectbox(
-        "Select a station",
-        queries.get_items("cities", city),
-        **kwargs)
 
-args = (region, department, city, station)
-if region or (region == "OUTRE MER" and department):
-    df, map_kwargs = \
-    queries.get_arguments(*args)
-    if city or station:
-        col2.map(df, **map_kwargs)
-    else:
-        col2.map(df)
+    stations = queries.get_items("cities", city)
+    if len(stations) > 1:
+        station = st.radio(
+            "Select a station",
+            stations,
+            help="The selected station appears in green on the map"
+            **kwargs)
+
+if (region or (region == "OUTRE MER" and department)):
+    if not(stations and len(stations) == 1):
+        col2.map(
+            queries.get_arguments(
+                region,
+                department,
+                stations,
+                selected_station=station))
 
 if station:
     if station not in queries.STATIONS:
@@ -136,4 +139,4 @@ if station:
                     visualization.plot(
                         [y_values[i],new_y_values[i]],
                         pollutant,
-                        comparing=" ".join(station,new_station,str(i))))
+                        comparison=" ".join(station,new_station,str(i))))
