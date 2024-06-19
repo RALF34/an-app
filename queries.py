@@ -108,16 +108,13 @@ def get_arguments(region, department, city, station):
         displayed_stations += get_items("cities", city)
         size, zoom = 40, 11
     elif department:
-        for city in get_items("departments", department):
-            displayed_stations += get_items("cities", city)
+        for x in get_items("departments", department):
+            displayed_stations += get_items("cities", x)
     else:
-        for department in get_items("regions", region):
-            for city in get_items("departments", department):
-                displayed_stations += get_items("cities", city)
-    if not(city or station):
-        kwargs = None
-    else:
-        kwargs = {"size": size, "zoom": zoom}
+        for x in get_items("regions", region):
+            for y in get_items("departments", x):
+                displayed_stations += get_items("cities", y)
+    kwargs = None if not(city or station) else {"size": size, "zoom": zoom}
     return df.loc[displayed_stations], kwargs
 
 def get_data(s, p):
