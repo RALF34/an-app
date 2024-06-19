@@ -67,8 +67,14 @@ with col1:
         queries.get_items("cities", city),
         **kwargs)
 
+args = (region, department, city, station)
 if region or (region == "OUTRE MER" and department):
-    col2.map(queries.get_coordinates(region, department, city, station))
+    df, map_kwargs = \
+    queries.get_arguments(*args)
+    if city or station:
+        col2.map(df, **map_kwargs)
+    else:
+        col2.map(df)
 
 if station:
     if station not in queries.STATIONS:
@@ -92,7 +98,8 @@ if station:
                 value=(ending_date-timedelta(days=90),ending_date),
                 format="DD/MM/YY")
             y_values = get_values(boundaries)
-            if not(np.array(st.session_state["current_data"][:2]).any()):
+            data_A, data_B = st.session_state["current_data"][:2]
+            if not(data_A or data_B):
                 st.error("No pollution data recorded during the given period.")
             else:
                 latest_data = st.toggle("Latest data")
@@ -118,7 +125,8 @@ if station:
                 value=(ending_date-timedelta(days=90), ending_date),
                 format="DD/MM/YY")
             new_y_values = get_values(boundaries, comparison=True)
-            if not(np.array(st.session_state["current_data"][2:]).any()):
+            data_A, data_B = st.session_state["current_data"][2:]
+            if not(data_A or data_B):
                 st.error("No pollution data recorded during the given period.")
             else:
                 parts = ["business days", "Weekend"]
