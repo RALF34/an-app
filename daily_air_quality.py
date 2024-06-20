@@ -70,8 +70,8 @@ with col1:
             help="The selected station appears in green on the map"
             **kwargs)
 
-args = (region, department, stations)
 if (region or (region == "OUTRE MER" and department)):
+    args = (region, department, stations)
     if not(city):
         col2.map(queries.get_df(*args))
     else:
