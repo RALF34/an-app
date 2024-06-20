@@ -61,14 +61,15 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-
-    stations = queries.get_items("cities", city)
-    if len(stations) > 1:
-        station = st.radio(
-            "Select a station",
-            stations,
-            help="The selected station appears in green on the map"
-            **kwargs)
+        
+    if city:
+        stations = queries.get_items("cities", city)
+        if len(stations) > 1:
+            station = st.radio(
+                "Select a station",
+                stations,
+                help="The selected station appears in green on the map"
+                **kwargs)
 
 if (region or (region == "OUTRE MER" and department)):
     if not(stations and len(stations) == 1):
@@ -79,37 +80,36 @@ if (region or (region == "OUTRE MER" and department)):
                 stations,
                 selected_station=station))
 
-if stations:
-    if station:
-        if station not in queries.STATIONS:
-            st.write("Sorry, no data available for this station.")
-    else:
-        pollution = st.selectbox(
-            "Select a type of pollution",
-            queries.get_items(
-                "distribution_pollutants",
-                station),
-                **kwargs)
-        if pollution:
-            pollutant = pollution.split()[0]
-            data = queries.get_data(station, pollutant)
-            for i, gb in enumerate([e.groupby("hour") for e in data]):
-                st.session_state["current_data"][i] = gb
-            boundaries = st.slider(
-                "Set the analysis period",
-                ending_date-timedelta(days=180),
-                ending_date,
-                value=(ending_date-timedelta(days=90),ending_date),
-                format="DD/MM/YY")
-            y_values = get_values(boundaries)
-            data_A, data_B = st.session_state["current_data"][:2]
-            if not(data_A or data_B):
-                st.error("No pollution data recorded during the given period.")
-            else:
-                latest_data = st.toggle("Latest data")
-                if latest_data:
-                    y_values += [queries.get_latest_data(station, pollutant)]
-                st.pyplot(visualization.plot(y_values, pollutant))
+if city and station:
+    if station not in queries.STATIONS:
+        st.write("Sorry, no data available for this station.")
+else:
+    pollution = st.selectbox(
+        "Select a type of pollution",
+        queries.get_items(
+            "distribution_pollutants",
+            station),
+            **kwargs)
+    if pollution:
+        pollutant = pollution.split()[0]
+        data = queries.get_data(station, pollutant)
+        for i, gb in enumerate([e.groupby("hour") for e in data]):
+            st.session_state["current_data"][i] = gb
+        boundaries = st.slider(
+            "Set the analysis period",
+            ending_date-timedelta(days=180),
+            ending_date,
+            value=(ending_date-timedelta(days=90),ending_date),
+            format="DD/MM/YY")
+        y_values = get_values(boundaries)
+        data_A, data_B = st.session_state["current_data"][:2]
+        if not(data_A or data_B):
+            st.error("No pollution data recorded during the given period.")
+        else:
+            latest_data = st.toggle("Latest data")
+            if latest_data:
+                y_values += [queries.get_latest_data(station, pollutant)]
+            st.pyplot(visualization.plot(y_values, pollutant))
 
     comparison = st.checkbox(
         "Compare against other cities")
