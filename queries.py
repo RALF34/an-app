@@ -98,7 +98,7 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_arguments(region, department, stations, selected_station=None):
+def get_df(region, department, stations, selected_station=None):
     df = dictionary["coordinates"]
     displayed_stations = []
     color = (247,0,0)

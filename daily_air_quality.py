@@ -61,24 +61,22 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-        
-    if city:
-        stations = queries.get_items("cities", city)
-        if len(stations) > 1:
-            station = st.radio(
-                "Select a station",
-                stations,
-                help="The selected station appears in green on the map"
-                **kwargs)
+    stations = queries.get_items("cities", city)
+    
+    if city and len(stations) > 1:
+        station = st.radio(
+            "Select a station",
+            stations,
+            help="The selected station appears in green on the map"
+            **kwargs)
 
+args = (region, department, station)
 if (region or (region == "OUTRE MER" and department)):
-    if not(stations and len(stations) == 1):
-        col2.map(
-            queries.get_arguments(
-                region,
-                department,
-                stations,
-                selected_station=station))
+    if not(city):
+        col2.map(queries.get_df(*args))
+    else:
+        if len(stations) > 1:
+            col2.map(queries.get_df(*args, selected_station=station))
 
 if city and station:
     if station not in queries.STATIONS:
