@@ -82,7 +82,7 @@ if (region or (region == "OUTRE MER" and department)):
 if stations:
     if station:
         if station not in queries.STATIONS:
-        st.write("Sorry, no data available for this station.")
+            st.write("Sorry, no data available for this station.")
     else:
         pollution = st.selectbox(
             "Select a type of pollution",
