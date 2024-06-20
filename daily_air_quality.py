@@ -61,7 +61,7 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    stations = queries.get_items("cities", city)
+    stations = queries.get_items("cities", city) if city else None
     
     if city and len(stations) > 1:
         station = st.radio(
