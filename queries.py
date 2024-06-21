@@ -103,7 +103,8 @@ def get_df(region, department, stations):
     displayed_stations = []
     red, green = (247,0,0), (0,247,0)
     if stations:
-        displayed_stations = stations[0]
+        displayed_stations = [stations] if len(stations)==1 else \
+        stations[0]
     elif department:
         for x in get_items("departments", department):
             displayed_stations += get_items("cities", x)
@@ -112,15 +113,17 @@ def get_df(region, department, stations):
             for y in get_items("departments", x):
                 displayed_stations += get_items("cities", y)
     df = df.loc[displayed_stations]
+    n = df.shape[0]
     if not(stations):
-        column = [red]*df.shape[0]
+        color, size = [red]*n, [100]*n
     else:
         if len(stations) == 1:
-            column = [green]
+            color = [green]
         else:
             a = df.index.values
-            column = np.where(a==stations[1],green,red).tolist()
-    df["color"] = column
+            color = np.where(a==stations[1],green,red).tolist()
+        size = [17]
+    df["color"] = color
     return df
 
 
