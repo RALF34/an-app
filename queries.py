@@ -113,13 +113,13 @@ def get_df(region, department, stations):
                 displayed_stations += get_items("cities", y)
     df = df.loc[displayed_stations]
     if not(stations):
-        column = pd.Series([red]*df.shape[0])
+        column = [red]*df.shape[0]
     else:
         if len(stations) == 1:
-            column = pd.Series(green)
+            column = [green]
         else:
             a = df.index.values
-            column = pd.Series(np.where(a==stations[1],green,red))
+            column = np.where(a==stations[1],green,red).tolist()
     df["color"] = column
     return df
 
