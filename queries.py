@@ -103,7 +103,7 @@ def get_df(region, department, stations):
     displayed_stations = []
     red, green = (247,0,0), (0,247,0)
     if stations:
-        displayed_stations = [stations] if len(stations)==1 else \
+        displayed_stations = stations if len(stations)==1 else \
         stations[0]
     elif department:
         for x in get_items("departments", department):
