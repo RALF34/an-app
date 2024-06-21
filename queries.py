@@ -82,7 +82,7 @@ def get_items(where, group):
     group -- name of the group whose data we want to extract.
     '''
     data = dictionary[where]
-    items = [""]
+    items = []
     if group:
         if group == "REGIONS":
             items = list(data.groups.keys())
@@ -98,12 +98,12 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_df(region, department, stations, selected_station=None):
+def get_df(region, department, stations):
     df = dictionary["coordinates"]
     displayed_stations = []
-    color = (247,0,0)
+    red, green = (247,0,0), (0,247,0)
     if stations:
-        displayed_stations = stations
+        displayed_stations = stations[0]
     elif department:
         for x in get_items("departments", department):
             displayed_stations += get_items("cities", x)
@@ -112,11 +112,15 @@ def get_df(region, department, stations, selected_station=None):
             for y in get_items("departments", x):
                 displayed_stations += get_items("cities", y)
     df = df.loc[displayed_stations]
-    if selected_station:
-        a = df.index.values
-        df["color"] = pd.Series(np.where(a==selected_station,(0,247,0),color))
+    if not(stations):
+        column = pd.Series([red]*df.shape[0])
     else:
-        df["color"] = pd.Series([color]*df.shape[0])
+        if len(stations) == 1:
+            column = pd.Series(green)
+        else:
+            a = df.index.values
+            column = pd.Series(np.where(a==stations[1],green,red))
+    df["color"] = column
     return df
 
 

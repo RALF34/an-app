@@ -45,8 +45,9 @@ def get_values(boundaries, comparison=False):
     
 col1, col2 = st.columns((0.4,0.6))
 with col1:
+
     kwargs = {"index": None, "placeholder": ""}
-        
+    
     region = st.selectbox(
         "Select a French region",
         queries.get_items("regions", "REGIONS"),
@@ -61,81 +62,80 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    stations = queries.get_items("cities", city) if city else None
-    
+    stations = queries.get_items("cities", city)
+    selected_station = None
     if city and len(stations) > 1:
-        station = st.radio(
+        selected_station = st.radio(
             "Select a station",
             stations,
-            help="The selected station appears in green on the map"
+            help="The selected station appears in green on the map",
             **kwargs)
+        if selected_station:
+            stations = [stations]+[selected_station]
+        choice_validated = st.button("Validate", type="primary")
 
-if (region or (region == "OUTRE MER" and department)):
-    args = (region, department, stations)
-    if not(city):
-        col2.map(queries.get_df(*args))
-    else:
-        if len(stations) > 1:
-            col2.map(queries.get_df(*args, selected_station=station))
-
-if city and station:
-    if station not in queries.STATIONS:
-        st.write("Sorry, no data available for this station.")
-    else:
-        pollution = st.selectbox(
-            "Select a type of pollution",
-            queries.get_items(
-                "distribution_pollutants",
-                station),
-                **kwargs)
-        if pollution:
-            pollutant = pollution.split()[0]
-            data = queries.get_data(station, pollutant)
-            for i, gb in enumerate([e.groupby("hour") for e in data]):
-                st.session_state["current_data"][i] = gb
-            boundaries = st.slider(
-                "Set the analysis period",
-                ending_date-timedelta(days=180),
-                ending_date,
-                value=(ending_date-timedelta(days=90),ending_date),
-                format="DD/MM/YY")
-            y_values = get_values(boundaries)
-            data_A, data_B = st.session_state["current_data"][:2]
-            if not(data_A or data_B):
-                st.error("No pollution data recorded during the given period.")
-            else:
-                latest_data = st.toggle("Latest data")
-                if latest_data:
-                    y_values += [queries.get_latest_data(station, pollutant)]
-                st.pyplot(visualization.plot(y_values, pollutant))
-
-        comparison = st.checkbox(
-            "Compare against other cities")
-        if comparison:
-            new_station = st.selectbox(
-                "Select a station",
-                queries.get_stations(pollutant),
-                **kwargs)
-            if new_station:
-                data = queries.get_data(new_station, pollutant)
+with col2:
+    if (region or (region == "OUTRE MER" and department)):
+        st.map(queries.get_df(region, department, stations), color="color")
+        
+if city:
+    if choice_validated:
+        if selected_station not in queries.STATIONS:
+            st.write("Sorry, no data available for this station.")
+        else:
+            pollution = st.selectbox(
+                "Select a type of pollution",
+                queries.get_items(
+                    "distribution_pollutants",
+                    selected_station),
+                    **kwargs)
+            if pollution:
+                pollutant = pollution.split()[0]
+                data = queries.get_data(selected_station, pollutant)
                 for i, gb in enumerate([e.groupby("hour") for e in data]):
-                    st.session_state["current_data"][i+2] = gb
+                    st.session_state["current_data"][i] = gb
                 boundaries = st.slider(
                     "Set the analysis period",
                     ending_date-timedelta(days=180),
                     ending_date,
-                    value=(ending_date-timedelta(days=90), ending_date),
+                    value=(ending_date-timedelta(days=90),ending_date),
                     format="DD/MM/YY")
-                new_y_values = get_values(boundaries, comparison=True)
-                data_A, data_B = st.session_state["current_data"][2:]
+                y_values = get_values(boundaries)
+                data_A, data_B = st.session_state["current_data"][:2]
                 if not(data_A or data_B):
                     st.error("No pollution data recorded during the given period.")
                 else:
-                    parts = ["business days", "Weekend"]
-                    part_of_the_week = st.radio("", parts, horizontal=True)
-                    i = parts.index(part_of_the_week)
-                    st.pyplot(
-                        visualization.plot(
-                            [y_values[i],new_y_values[i]],
-                            pollutant,
-                            comparison=" ".join(station,new_station,str(i))))
+                    latest_data = st.toggle("Latest data")
+                    if latest_data:
+                        y_values += [queries.get_latest_data(selected_station, pollutant)]
+                    st.pyplot(visualization.plot(y_values, pollutant))
+
+                comparison = st.checkbox("Compare against other cities")
+                if comparison:
+                    new_station = st.selectbox(
+                        "Select a station",
+                        queries.get_stations(pollutant),
+                        **kwargs)
+                    if new_station:
+                        data = queries.get_data(new_station, pollutant)
+                        for i, gb in enumerate([e.groupby("hour") for e in data]):
+                            st.session_state["current_data"][i+2] = gb
+                        boundaries = st.slider(
+                            "Set the analysis period",
+                            ending_date-timedelta(days=180),
+                            ending_date,
+                            value=(ending_date-timedelta(days=90), ending_date),
+                            format="DD/MM/YY")
+                        new_y_values = get_values(boundaries, comparison=True)
+                        data_A, data_B = st.session_state["current_data"][2:]
+                        if not(data_A or data_B):
+                            st.error("No pollution data recorded during the given period.")
+                        else:
+                            parts = ["business days", "Weekend"]
+                            part_of_the_week = st.radio("", parts, horizontal=True)
+                            i = parts.index(part_of_the_week)
+                            st.pyplot(
+                                visualization.plot(
+                                    [y_values[i],new_y_values[i]],
+                                    pollutant,
+                                    comparison=" ".join(selected_station,new_station,str(i))))
