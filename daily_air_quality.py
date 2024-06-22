@@ -19,6 +19,13 @@ st.write('''
 s = open("data/last_update.txt", "r").read()
 ending_date = date.fromisoformat(s)-timedelta(days=1)
 st.session_state["current_data"] = [None, None, None, None]
+
+m = st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: rgb(0, 207, 0);
+}
+</style>""", unsafe_allow_html=True)
     
 def get_values(boundaries, comparison=False):
     y_values = [None, None]
