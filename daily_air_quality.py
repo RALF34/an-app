@@ -71,7 +71,7 @@ with col1:
         queries.get_items("departments", department),
         **kwargs)
     stations = queries.get_items("cities", city)
-    if city:
+    if stations:
         if len(stations) > 1:
             selected_station = st.radio(
                 "Select a station",
@@ -102,19 +102,21 @@ if city:
             if pollution:
                 pollutant = pollution.split()[0]
                 data = queries.get_data(selected_station, pollutant)
-                for i, gb in enumerate([e.groupby("hour") for e in data]):
-                    st.session_state["current_data"][i] = gb
+                for i, df in enumerate(data):
+                    st.session_state["current_data"][i] = None if not(df) \
+                    else df.groupby("hour")
                 boundaries = st.slider(
                     "Set the analysis period",
                     ending_date-timedelta(days=180),
                     ending_date,
-                    value=(ending_date-timedelta(days=90),ending_date),
+                    value=(ending_date-timedelta(days=90) ,ending_date),
                     format="DD/MM/YY")
                 y_values = get_values(boundaries)
-                data_A, data_B = st.session_state["current_data"][:2]
-                if not(data_A or data_B):
+                if y_values == [None, None]:
                     st.error("No pollution data recorded during the given period.")
                 else:
+                    if None in in y_values:
+                        y_values[y_values.index(None)] = [0]*24
                     latest_data = st.toggle("Latest data")
                     if latest_data:
                         y_values += [queries.get_latest_data(selected_station, pollutant)]
@@ -128,8 +130,9 @@ if city:
                         **kwargs)
                     if new_station:
                         data = queries.get_data(new_station, pollutant)
-                        for i, gb in enumerate([e.groupby("hour") for e in data]):
-                            st.session_state["current_data"][i+2] = gb
+                        for i, df in enumerate(data):
+                            st.session_state["current_data"][i+2] = None if not(df) \
+                            else df.groupby("hour")
                         boundaries = st.slider(
                             "Set the analysis period",
                             ending_date-timedelta(days=180),
@@ -137,10 +140,11 @@ if city:
                             value=(ending_date-timedelta(days=90), ending_date),
                             format="DD/MM/YY")
                         new_y_values = get_values(boundaries, comparison=True)
-                        data_A, data_B = st.session_state["current_data"][2:]
-                        if not(data_A or data_B):
+                        if new_y_values == [None, None]:
                             st.error("No pollution data recorded during the given period.")
                         else:
+                            if None in new_y_values:
+                                new_y_values[new_y_values.index(None)] = [0]*24
                             parts = ["business days", "Weekend"]
                             part_of_the_week = st.radio("", parts, horizontal=True)
                             i = parts.index(part_of_the_week)

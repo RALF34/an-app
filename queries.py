@@ -122,7 +122,7 @@ def get_df(region, department, stations):
             color = [green]
         else:
             a = df.index.values
-            color = np.where(a==stations[1],green,red).tolist()
+            color = [green if e==stations[1] else red for e in a]
         size = [17]
     df["color"] = color
     return df
@@ -138,7 +138,7 @@ def get_data(s, p):
     result = []
     for data in [x, y]:
         try:
-            result.append(data.get_group((s,p)))
+            result.append(data.get_group((s, p)))
         except:
             result.append(None)
     return result
@@ -148,10 +148,10 @@ def get_latest_data(s, p):
     if dictionary["latest_data"]:
         df = dictionary["latest_data"].get_group(
             (s, p)).set_index("hour")
-        dictionary = {str(x): 0 for x in range(24)}
+        averages = {str(x): 0 for x in range(24)}
         for hour in df.index:
-            dictionary[str(hour)] = df.at["hour","valeur brute"]
-        values = list(dictionary.values())
+            averages[str(hour)] = df.at["hour","valeur brute"]
+        values = list(averages.values())
     return values
 
 def get_stations(pollutant):

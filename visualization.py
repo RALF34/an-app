@@ -24,20 +24,20 @@ def plot(
     "station".
     '''
     figure, ax = pyplot.subplots()
-    figure.set_size_inches(17,14)
+    figure.set_size_inches(17, 14)
     # Plot the data using either a continuous line (if all the 24
     # values are different from zero) or points.
     l = list(zip(
-        ["Business days","Weekends","Yesterday"],
-        ["dodgerblue","cyan","peru"]))
+        ["Business days", "Weekends", "Yesterday"],
+        ["dodgerblue", "cyan", "peru"]))
     if comparison:
         station_A, station_B, i = comparing.split()
         color = "navy" if not(int(i)) else "cadetblue"
-        l = [(station_A,l[i][1]),(station_B,color)]
-    A = np.unique(np.nonzero(np.array(values[0])))
+        l = [(station_A, l[i][1]), (station_B, color)]
+    A = np.unique(np.nonzero(np.array(values)))
     x = [str(x)+"h00" for x in range(24)]
     for i in range(len(values)):
-        args, kargs = (x, values[i]), {"label": l[i][0],"c":l[i][1]}
+        args, kargs = (x, values[i]), {"label": l[i][0], "c": l[i][1]}
         if i in A:
             ax.plot(*args, **kargs)
         else:
