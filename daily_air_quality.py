@@ -24,6 +24,7 @@ m = st.markdown("""
 <style>
 div.stButton > button:first-child {
     background-color: rgb(0, 207, 0);
+    border-color: rgb(0, 207, 0)
 }
 </style>""", unsafe_allow_html=True)
     
@@ -79,6 +80,8 @@ with col1:
                 index=None)
             if selected_station:
                 stations = [stations]+[selected_station]
+        else:
+            selected_station = stations[0]
         choice_validated = st.button("Validate", type="primary")
 
 with col2:
