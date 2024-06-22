@@ -63,14 +63,15 @@ with col1:
         queries.get_items("departments", department),
         **kwargs)
     stations = queries.get_items("cities", city)
-    if city and len(stations) > 1:
-        selected_station = st.radio(
-            "Select a station",
-            stations,
-            help="The selected station appears in green on the map",
-            index=None)
-        if selected_station:
-            stations = [stations]+[selected_station]
+    if city:
+        if len(stations) > 1:
+            selected_station = st.radio(
+                "Select a station",
+                stations,
+                help="The selected station appears in green on the map",
+                index=None)
+            if selected_station:
+                stations = [stations]+[selected_station]
         choice_validated = st.button("Validate", type="primary")
 
 with col2:
