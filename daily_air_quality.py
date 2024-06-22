@@ -115,7 +115,7 @@ if city:
                 if y_values == [None, None]:
                     st.error("No pollution data recorded during the given period.")
                 else:
-                    if None in in y_values:
+                    if None in y_values:
                         y_values[y_values.index(None)] = [0]*24
                     latest_data = st.toggle("Latest data")
                     if latest_data:
