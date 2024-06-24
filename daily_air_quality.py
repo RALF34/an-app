@@ -71,6 +71,7 @@ with col1:
         queries.get_items("departments", department),
         **kwargs)
     stations = queries.get_items("cities", city)
+    selected_station = None
     if stations:
         if len(stations) > 1:
             selected_station = st.radio(
@@ -78,18 +79,18 @@ with col1:
                 stations,
                 help="The selected station appears in green on the map",
                 index=None)
-            if selected_station:
-                stations = [stations]+[selected_station]
         else:
             selected_station = stations[0]
-        choice_validated = st.button("Validate", type="primary")
 
 with col2:
     if (region or (region == "OUTRE MER" and department)):
-        st.map(queries.get_df(region, department, stations), color="color")
+        st.map(
+            queries.get_df(
+                region, department, stations, selected_station=selected_station),
+                color="color")
         
-if city:
-    if choice_validated:
+with col1:
+    if selected_station:
         if selected_station not in queries.STATIONS:
             st.write("Sorry, no data available for this station.")
         else:

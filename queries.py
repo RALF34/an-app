@@ -55,7 +55,7 @@ def load_data():
         data["hour"] = data["Date de début"].apply(
             lambda x: datetime.strptime(x, "%Y/%m/%d %H:%M:%S").hour)
         data = data[["nom site","Polluant","hour","valeur brute"]]
-        latest_data = data.groupby(["nom site","Polluant"])
+        latest_data = data.groupby(["code site","Polluant"])
     else:
         latest_data = None
     return {
@@ -99,13 +99,12 @@ def get_items(where, group):
                 items = [e+" pollution" for e in items]
     return items
 
-def get_df(region, department, stations):
+def get_df(region, department, stations, selected_station=None):
     df = dictionary["coordinates"]
     displayed_stations = []
     red, green = (247,0,0), (0,247,0)
     if stations:
-        displayed_stations = stations if len(stations)==1 else \
-        stations[0]
+        displayed_stations = stations
     elif department:
         for x in get_items("departments", department):
             displayed_stations += get_items("cities", x)
@@ -122,7 +121,10 @@ def get_df(region, department, stations):
             color = [green]
         else:
             a = df.index.values
-            color = [green if e==stations[1] else red for e in a]
+            if selected_station:
+                color = [green if e==stations[1] else red for e in a]
+            else:
+                color = [red]*df.shape[0]
         size = [17]
     df["color"] = color
     return df
