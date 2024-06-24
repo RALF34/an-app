@@ -112,6 +112,11 @@ def get_df(region, department, stations, selected_station=None):
         for x in get_items("regions", region):
             for y in get_items("departments", x):
                 displayed_stations += get_items("cities", y)
+        if region in ["ILE-DE-FRANCE", "LA REUNION"]:
+            for e in displayed_stations:
+                if (region=="ILE-DE-FRANCE" and e[1] in ["FR04058", "FR04059"])
+                or (region=="LA REUNION" and e[1] in ["FR38001", "FR38002", "FR38008"]):
+                    displayed_stations.remove(e)
     df = df.loc[displayed_stations]
     n = df.shape[0]
     if not(stations):

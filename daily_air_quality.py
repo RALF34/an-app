@@ -76,11 +76,11 @@ with col1:
         if len(stations) > 1:
             selected_station = st.radio(
                 "Select a station",
-                stations,
+                [s[0] for s in stations],
                 help="The selected station appears in green on the map",
                 index=None)
         else:
-            selected_station = stations[0]
+            selected_station = stations[0][0]
 
 with col2:
     if (region or (region == "OUTRE MER" and department)):
