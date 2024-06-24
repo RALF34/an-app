@@ -54,7 +54,7 @@ def load_data():
         data = data[data["valeur brute"]>0]
         data["hour"] = data["Date de début"].apply(
             lambda x: datetime.strptime(x, "%Y/%m/%d %H:%M:%S").hour)
-        data = data[["nom site","Polluant","hour","valeur brute"]]
+        data = data[["code site","Polluant","hour","valeur brute"]]
         latest_data = data.groupby(["code site","Polluant"])
     else:
         latest_data = None
