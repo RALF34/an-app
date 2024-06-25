@@ -26,7 +26,7 @@ def load_data():
     l = locations["station"].to_list()
     locations["name"] = [x[0] for x in l]
     locations["code"] = [x[1] for x in l]
-    stations = locations["city","name","code"].set_index("code")
+    stations = locations[["city","name","code"]].set_index("code")
     list_of_df = []
     for x in ["A","B","C","D","E","F"]:
         list_of_df.append(pd.read_csv(f"data/dataset_{x}.csv"))
