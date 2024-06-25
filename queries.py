@@ -23,6 +23,10 @@ def load_data():
         ["department","city"]].groupby("department")
     cities = locations[
         ["city","station"]].groupby("city")
+    l = locations["station"].to_list()
+    locations["name"] = [x[0] for x in l]
+    locations["code"] = [x[1] for x in l]
+    stations = locations["city","name","code"].set_index("code")
     list_of_df = []
     for x in ["A","B","C","D","E","F"]:
         list_of_df.append(pd.read_csv(f"data/dataset_{x}.csv"))
@@ -33,7 +37,7 @@ def load_data():
     distribution_pollutants = business_days[
         ["station","pollutant"]].groupby("station")
     distribution_cities = business_days[
-        ["pollutant","city","station"]].groupby("pollutant")
+        ["pollutant","station"]].groupby("pollutant")
     columns = ["station","pollutant"]
     business_days = business_days.groupby(columns)
     weekends = weekends.groupby(columns)
@@ -63,6 +67,7 @@ def load_data():
         "regions": regions,
         "departments": departments,
         "cities": cities,
+        "stations": stations,
         "distribution_pollutants": distribution_pollutants,
         "distribution_cities": distribution_cities,
         "business_days": business_days,
@@ -166,8 +171,11 @@ def get_latest_data(s, p):
 
 @st.cache_data
 def get_stations(pollutant):
-    df = dictionary["distribution_cities"].get_group(
-        pollutant)
-    return sorted(
-        list(zip(df["city"].to_list(), df["station"].to_list())),
-        key=lambda x: x[0])
+    stations = dictionary["distribution_cities"].get_group(
+        pollutant)["station"].to_list()
+    df = dictionary["stations"].loc[stations]
+    df["city-name"] = list(zip(
+        df["city"].to_list(),
+        df["name"].to_list()))
+    df = df.set_index("city-name")
+    return df.sort_index(key=lambda x: x[0])

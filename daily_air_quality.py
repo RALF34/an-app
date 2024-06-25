@@ -102,11 +102,11 @@ with col1:
                 "Select a type of pollution",
                 queries.get_items(
                     "distribution_pollutants",
-                    selected_station),
+                    selected_station[1]),
                     **kwargs)
             if pollution:
                 pollutant = pollution.split()[0]
-                data = queries.get_data(selected_station, pollutant)
+                data = queries.get_data(selected_station[1], pollutant)
                 for i, df in enumerate(data):
                     st.session_state["current_data"][i] = None if not(df) \
                     else df.groupby("hour")
@@ -124,18 +124,19 @@ with col1:
                         y_values[y_values.index(None)] = [0]*24
                     latest_data = st.toggle("Latest data")
                     if latest_data:
-                        y_values += [queries.get_latest_data(selected_station, pollutant)]
+                        y_values += [queries.get_latest_data(selected_station[1], pollutant)]
                     st.pyplot(visualization.plot(y_values, pollutant))
 
                 comparison = st.checkbox("Compare against other cities")
                 if comparison:
-                    stations = queries.get_stations(pollutant)
-                    new_station = st.selectbox(
-                        "Select a station",
-                        [s[0]+" ("+s[1]+")" for s in stations],
-                        **kwargs)
+                    df = queries.get_stations(pollutant)
+                    stations = df.index.to_list()
+                    options = [x[0]+" ("+x[1]+")" for x in stations]
+                    new_station = st.selectbox("Select a station", options, **kwargs)
                     if new_station:
-                        data = queries.get_data(new_station, pollutant)
+                        data = queries.get_data(
+                            df.at[stations[options.index(new_station)],"code"],
+                            pollutant)
                         for i, df in enumerate(data):
                             st.session_state["current_data"][i+2] = None if not(df) \
                             else df.groupby("hour")
@@ -158,4 +159,4 @@ with col1:
                                 visualization.plot(
                                     [y_values[i],new_y_values[i]],
                                     pollutant,
-                                    comparison=" ".join(selected_station,new_station,str(i))))
+                                    comparison=" ".join(selected_station[0],new_station,str(i))))
