@@ -33,7 +33,7 @@ def load_data():
     distribution_pollutants = business_days[
         ["station","pollutant"]].groupby("station")
     distribution_cities = business_days[
-        ["pollutant","station"]].groupby("pollutant")
+        ["pollutant","city","station"]].groupby("pollutant")
     columns = ["station","pollutant"]
     business_days = business_days.groupby(columns)
     weekends = weekends.groupby(columns)
@@ -87,8 +87,8 @@ def get_items(where, group):
     if group:
         if group == "REGIONS":
             items = list(data.groups.keys())
-            for e in OVERSEAS_DEPARTMENTS:
-                items.remove(e)
+            for x in OVERSEAS_DEPARTMENTS:
+                items.remove(x)
             items.append("OUTRE-MER")
         elif group == "OUTRE-MER":
                 items = OVERSEAS_DEPARTMENTS
@@ -96,7 +96,7 @@ def get_items(where, group):
             data = data.get_group(group)
             items = data.iloc[:,1].unique().tolist()
             if where == "distribution_pollutants":
-                items = [e+" pollution" for e in items]
+                items = [x+" pollution" for x in items]
     return items
 
 def get_df(region, department, stations, selected_station=None):
@@ -114,9 +114,9 @@ def get_df(region, department, stations, selected_station=None):
                 displayed_stations += get_items("cities", y)
         if region in ["ILE-DE-FRANCE", "LA REUNION"]:
             f_A = lambda x: (region=="ILE-DE-FRANCE") and \
-            (x in ["FR04058", "FR04059"])
+            (x in ["FR38001","FR38002","FR38008"])
             f_B = lambda x: (region=="LA REUNION") and \
-            (x in ["FR38001", "FR38002", "FR38008"])
+            (x in ["FR04058","FR04059"])
             for e in displayed_stations:
                 if f_A(e[1]) or f_B(e[1]):
                     displayed_stations.remove(e)
@@ -130,7 +130,7 @@ def get_df(region, department, stations, selected_station=None):
         else:
             a = df.index.values
             if selected_station:
-                color = [green if e==stations[1] else red for e in a]
+                color = [green if x==stations[1] else red for x in a]
             else:
                 color = [red]*df.shape[0]
         size = [17]
@@ -164,6 +164,10 @@ def get_latest_data(s, p):
         values = list(averages.values())
     return values
 
+@st.cache_data
 def get_stations(pollutant):
-    return dictionary["distribution_cities"].get_group(
-        pollutant)["station"].sort_values()
+    df = dictionary["distribution_cities"].get_group(
+        pollutant)
+    return sorted(
+        list(zip(df["city"].to_list(), df["station"].to_list())),
+        key=lambda x: x[0])

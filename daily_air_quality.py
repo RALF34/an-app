@@ -74,24 +74,28 @@ with col1:
     selected_station = None
     if stations:
         if len(stations) > 1:
-            selected_station = st.radio(
+            names = [s[0] for s in stations]
+            name = st.radio(
                 "Select a station",
-                [s[0] for s in stations],
+                names,
                 help="The selected station appears in green on the map",
                 index=None)
+            selected_station = (name, stations[names.index(name)][1])
         else:
-            selected_station = stations[0][0]
+            selected_station = stations[0]
 
 with col2:
     if (region or (region == "OUTRE MER" and department)):
+        zoom = 11 if stations else None
         st.map(
             queries.get_df(
-                region, department, stations, selected_station=selected_station),
-                color="color")
+                region, department, stations, selected_station=selected_station[0]),
+                color="color",
+                zoom=zoom)
         
 with col1:
     if selected_station:
-        if selected_station not in queries.STATIONS:
+        if selected_station[1] not in queries.STATIONS:
             st.write("Sorry, no data available for this station.")
         else:
             pollution = st.selectbox(
@@ -125,9 +129,10 @@ with col1:
 
                 comparison = st.checkbox("Compare against other cities")
                 if comparison:
+                    stations = queries.get_stations(pollutant)
                     new_station = st.selectbox(
                         "Select a station",
-                        queries.get_stations(pollutant),
+                        [s[0]+" ("+s[1]+")" for s in stations],
                         **kwargs)
                     if new_station:
                         data = queries.get_data(new_station, pollutant)
