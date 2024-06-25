@@ -87,9 +87,10 @@ with col1:
 with col2:
     if (region or (region == "OUTRE MER" and department)):
         zoom = 11 if stations else None
+        x = None if not(selected_station) else selected_station[0]
         st.map(
             queries.get_df(
-                region, department, stations, selected_station=selected_station[0]),
+                region, department, stations, selected_station=x),
                 color="color",
                 zoom=zoom)
         
@@ -159,4 +160,4 @@ with col1:
                                 visualization.plot(
                                     [y_values[i],new_y_values[i]],
                                     pollutant,
-                                    comparison=" ".join(selected_station[0],new_station,str(i))))
+                                    comparison=" ".join(selected_station[0], new_station, str(i))))
