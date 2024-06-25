@@ -80,7 +80,8 @@ with col1:
                 names,
                 help="The selected station appears in green on the map",
                 index=None)
-            selected_station = (name, stations[names.index(name)][1])
+            if name:
+                selected_station = (name, stations[names.index(name)][1])
         else:
             selected_station = stations[0]
 

@@ -106,7 +106,7 @@ def get_items(where, group):
 
 def get_df(region, department, stations, selected_station=None):
     df = dictionary["coordinates"]
-    displayed_stations = []
+    displayed_stations, stations_to_ignore = [], []
     red, green = (247,0,0), (0,247,0)
     if stations:
         displayed_stations = stations
@@ -115,16 +115,13 @@ def get_df(region, department, stations, selected_station=None):
             displayed_stations += get_items("cities", x)
     else:
         for x in get_items("regions", region):
+            if region == "ILE-DE-FRANCE":
+                stations_to_ignore += ["FR38001","FR38002","FR38008"]
+            if region == "LA REUNION":
+                stations_to_ignore += ["FR04058","FR04059"]
             for y in get_items("departments", x):
-                displayed_stations += get_items("cities", y)
-        if region in ["ILE-DE-FRANCE", "LA REUNION"]:
-            f_A = lambda x: (region=="ILE-DE-FRANCE") and \
-            (x in ["FR38001","FR38002","FR38008"])
-            f_B = lambda x: (region=="LA REUNION") and \
-            (x in ["FR04058","FR04059"])
-            for e in displayed_stations:
-                if f_A(e[1]) or f_B(e[1]):
-                    displayed_stations.remove(e)
+                if y not in stations_to_ignore:
+                    displayed_stations += get_items("cities", y)
     df = df.loc[displayed_stations]
     n = df.shape[0]
     if not(stations):
