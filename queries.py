@@ -24,7 +24,7 @@ def load_data():
     cities = locations[
         ["city","station"]].groupby("city")
     l = locations["station"].apply(
-        lambda x: x.split())
+        lambda x: x.split("&"))
     locations["name"] = [x[0] for x in l]
     locations["code"] = [x[1] for x in l]
     stations = locations[["city","name","code"]].set_index("code")
