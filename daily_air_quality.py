@@ -70,7 +70,9 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    stations = queries.get_items("cities", city)
+    stations = list(map(
+        lambda x: x.split(),
+        queries.get_items("cities", city)))
     selected_station = None
     if stations:
         if len(stations) > 1:
@@ -81,7 +83,7 @@ with col1:
                 help="The selected station appears in green on the map",
                 index=None)
             if name:
-                selected_station = (name, stations[names.index(name)][1])
+                selected_station = [name, stations[names.index(name)][1]]
         else:
             selected_station = stations[0]
 

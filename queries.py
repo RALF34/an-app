@@ -23,7 +23,8 @@ def load_data():
         ["department","city"]].groupby("department")
     cities = locations[
         ["city","station"]].groupby("city")
-    l = locations["station"].to_list()
+    l = locations["station"].apply(
+        lambda x: x.split())
     locations["name"] = [x[0] for x in l]
     locations["code"] = [x[1] for x in l]
     stations = locations[["city","name","code"]].set_index("code")
@@ -171,8 +172,6 @@ def get_stations(pollutant):
     stations = dictionary["distribution_cities"].get_group(
         pollutant)["station"].to_list()
     df = dictionary["stations"].loc[stations]
-    df["city-name"] = list(zip(
-        df["city"].to_list(),
-        df["name"].to_list()))
+    df["city-name"] = list(zip(df["city"]), df["name"])
     df = df.set_index("city-name")
     return df.sort_index(key=lambda x: x[0])
