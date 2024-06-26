@@ -121,8 +121,9 @@ def get_df(region, department, stations, selected_station=None):
             if region == "LA REUNION":
                 stations_to_ignore += ["FR04058","FR04059"]
             for y in get_items("departments", x):
-                if y not in stations_to_ignore:
-                    displayed_stations += get_items("cities", y)
+                current_stations = get_items("cities", y)
+                if current_stations[0].split()[1] not in stations_to_ignore:
+                    displayed_stations += current_stations
     df = df.loc[displayed_stations]
     n = df.shape[0]
     if not(stations):
@@ -133,7 +134,8 @@ def get_df(region, department, stations, selected_station=None):
         else:
             a = df.index.values
             if selected_station:
-                color = [green if x==stations[1] else red for x in a]
+                f = lambda x: x[0]+"&"+x[1]
+                color = [green if x==f(selected_station) else red for x in a]
             else:
                 color = [red]*df.shape[0]
         size = [17]
@@ -174,4 +176,4 @@ def get_stations(pollutant):
     df = dictionary["stations"].loc[stations]
     df["city-name"] = list(zip(df["city"]), df["name"])
     df = df.set_index("city-name")
-    return df.sort_index(key=lambda x: x[0])
+    return df.sort_index(key=lambda x: x.split()[0])

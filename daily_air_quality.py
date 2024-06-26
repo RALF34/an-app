@@ -70,22 +70,21 @@ with col1:
         "Select a French city",
         queries.get_items("departments", department),
         **kwargs)
-    stations = list(map(
-        lambda x: x.split(),
-        queries.get_items("cities", city)))
+    stations = queries.get_items("cities", city)
     selected_station = None
     if stations:
         if len(stations) > 1:
-            names = [s[0] for s in stations]
+            names_codes = [x.split("&") for x in stations]
+            names = [s[0] for s in names_codes]
             name = st.radio(
                 "Select a station",
                 names,
                 help="The selected station appears in green on the map",
                 index=None)
             if name:
-                selected_station = [name, stations[names.index(name)][1]]
+                selected_station = [name, names_codes[names.index(name)][1]]
         else:
-            selected_station = stations[0]
+            selected_station = names_codes[0]
 
 with col2:
     if (region or (region == "OUTRE MER" and department)):
