@@ -122,7 +122,7 @@ def get_df(region, department, stations, selected_station=None):
                 stations_to_ignore += ["FR04058","FR04059"]
             for y in get_items("departments", x):
                 current_stations = get_items("cities", y)
-                if current_stations[0].split()[1] not in stations_to_ignore:
+                if current_stations[0].split("&")[1] not in stations_to_ignore:
                     displayed_stations += current_stations
     df = df.loc[displayed_stations]
     n = df.shape[0]
