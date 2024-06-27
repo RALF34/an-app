@@ -18,7 +18,7 @@ st.write('''
     
 s = open("data/last_update.txt", "r").read()
 ending_date = date.fromisoformat(s)-timedelta(days=1)
-st.session_state["current_data"] = [None, None, None, None]
+st.session_state["current data"] = [None, None, None, None]
 
 m = st.markdown("""
 <style>
@@ -111,8 +111,10 @@ with col1:
                 pollutant = pollution.split()[0]
                 data = queries.get_data(selected_station[1], pollutant)
                 for i, df in enumerate(data):
-                    st.session_state["current_data"][i] = None if not(df) \
-                    else df.groupby("hour")
+                    if df:
+                        st.session_state["current data"][i] = df.groupby("hour")
+                    else:
+                        st.session_state["current data"][i] = None
                 boundaries = st.slider(
                     "Set the analysis period",
                     ending_date-timedelta(days=180),
@@ -141,8 +143,10 @@ with col1:
                             df.at[stations[options.index(new_station)],"code"],
                             pollutant)
                         for i, df in enumerate(data):
-                            st.session_state["current_data"][i+2] = None if not(df) \
-                            else df.groupby("hour")
+                            if df:
+                                st.session_state["current_data"][i+2] = df.groupby("hour")
+                            else:
+                                df = None
                         boundaries = st.slider(
                             "Set the analysis period",
                             ending_date-timedelta(days=180),
