@@ -71,10 +71,10 @@ with col1:
         queries.get_items("departments", department),
         **kwargs)
     stations = queries.get_items("cities", city)
+    names_codes = [x.split("&") for x in stations]
     selected_station = None
     if stations:
         if len(stations) > 1:
-            names_codes = [x.split("&") for x in stations]
             names = [s[0] for s in names_codes]
             name = st.radio(
                 "Select a station",

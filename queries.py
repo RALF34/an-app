@@ -115,14 +115,15 @@ def get_df(region, department, stations, selected_station=None):
         for x in get_items("departments", department):
             displayed_stations += get_items("cities", x)
     else:
-        for x in get_items("regions", region):
-            if region == "ILE-DE-FRANCE":
-                stations_to_ignore += ["FR38001","FR38002","FR38008"]
-            if region == "LA REUNION":
-                stations_to_ignore += ["FR04058","FR04059"]
+        if region == "ILE-DE-FRANCE":
+            stations_to_ignore = ["FR38001","FR38002","FR38008"]
+        if region == "LA REUNION":
+            stations_to_ignore = ["FR04058","FR04059"]
+        for x in get_items("regions", region)
             for y in get_items("departments", x):
                 current_stations = get_items("cities", y)
-                if current_stations[0].split("&")[1] not in stations_to_ignore:
+                s = current_stations[0].split("&")[1]
+                if s not in stations_to_ignore:
                     displayed_stations += current_stations
     df = df.loc[displayed_stations]
     n = df.shape[0]
