@@ -119,7 +119,7 @@ def get_df(region, department, stations, selected_station=None):
             stations_to_ignore = ["FR38001","FR38002","FR38008"]
         if region == "LA REUNION":
             stations_to_ignore = ["FR04058","FR04059"]
-        for x in get_items("regions", region)
+        for x in get_items("regions", region):
             for y in get_items("departments", x):
                 current_stations = get_items("cities", y)
                 s = current_stations[0].split("&")[1]
