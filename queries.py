@@ -126,7 +126,8 @@ def get_df(region, department, stations, selected_station=None):
         codes = [x.split("&")[1] for x in displayed_stations]
         for x in codes:
             if x in stations_to_ignore:
-                _ = displayed_stations.pop(codes.index(x))
+                displayed_stations.remove(
+                    displayed_stations[codes.index(x)])
     df = df.loc[displayed_stations]
     n = df.shape[0]
     if not(stations):
