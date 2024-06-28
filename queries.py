@@ -138,10 +138,9 @@ def get_df(region, department, stations, selected_station=None):
         if len(stations) == 1:
             color = [green]
         else:
-            a = df.index.values
+            a = df.index
             if selected_station:
-                f = lambda x: x[0]+"&"+x[1]
-                color = [green if x==f(selected_station) else red for x in a]
+                color = [green if x==selected_station else red for x in a]
             else:
                 color = [red]*df.shape[0]
         size = [17]
@@ -172,8 +171,7 @@ def get_latest_data(s, p):
         averages = {str(x): 0 for x in range(24)}
         for hour in df.index:
             averages[str(hour)] = df.at["hour","valeur brute"]
-        values = list(averages.values())
-    return values
+    return list(averages.values())
 
 @st.cache_data
 def get_stations(pollutant):
