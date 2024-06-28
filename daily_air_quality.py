@@ -111,7 +111,7 @@ with col1:
                 pollutant = pollution.split()[0]
                 data = queries.get_data(selected_station[1], pollutant)
                 for i, df in enumerate(data):
-                    st.session_state["current data"][i] = None if df == None \
+                    st.session_state["current data"][i] = None if type(df) is str \
                     else df.groupby("hour")
                 boundaries = st.slider(
                     "Set the analysis period",
@@ -141,7 +141,7 @@ with col1:
                             df.at[stations[options.index(new_station)],"code"],
                             pollutant)
                         for i, df in enumerate(data):
-                            st.session_state["current data"][i+2] = None if df == None \
+                            st.session_state["current data"][i+2] = None if type(data) is str \
                             else df.groupby("hour")
                         boundaries = st.slider(
                             "Set the analysis period",

@@ -5,12 +5,12 @@ import pandas as pd
 import streamlit as st
 
 OVERSEAS_DEPARTMENTS = [
-    "GUADELOUPE",
-    "GUYANE",
-    "MARTINIQUE",
-    "LA REUNION",
-    "MAYOTTE",
-    "SAINT-MARTIN"]
+    "Guadeloupe",
+    "Guyane",
+    "Martinique",
+    "La Réunion",
+    "Mayotte",
+    "Saint-Martin"]
 
 @st.cache_resource
 def load_data():
@@ -123,11 +123,13 @@ def get_df(region, department, stations, selected_station=None):
     if department and department == "LA REUNION":
         stations_to_ignore = ["FR04058","FR04059"]
     if stations_to_ignore:
-        codes = [x.split("&")[1] for x in displayed_stations]
-        for x in codes:
-            if x in stations_to_ignore:
-                displayed_stations.remove(
-                    displayed_stations[codes.index(x)])
+        codes, i = [x.split("&")[1] for x in displayed_stations], 0
+        while i < len(codes):
+            if codes[i] in stations_to_ignore:
+                displayed_stations.remove(displayed_stations[i])
+                codes.remove(codes[i])
+            else:
+                i += 1
     df = df.loc[displayed_stations]
     n = df.shape[0]
     if not(stations):
@@ -149,7 +151,7 @@ def get_df(region, department, stations, selected_station=None):
 
 def get_data(s, p):
     '''
-    Return the pandas dataframes (or None when not enough data)
+    Return the pandas dataframes (or "None" when not enough data)
     containing hourly average air concentrations of pollutant "p" 
     recorded by station "s" on both working_days and weekends.
     '''
@@ -159,7 +161,7 @@ def get_data(s, p):
         try:
             result.append(data.get_group((s, p)))
         except:
-            result.append(None)
+            result.append("None")
     return result
 
 def get_latest_data(s, p):
