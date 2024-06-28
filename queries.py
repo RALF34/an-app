@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-OVERSEAS_DEPARTMENTS = [
-    "Guadeloupe",
-    "Guyane",
-    "Martinique",
-    "La Réunion",
-    "Mayotte",
-    "Saint-Martin"]
+OVERSEAS_DEPARTMENTS = {
+    "Guadeloupe": "GUADELOUPE",
+    "Guyane": "GUYANE",
+    "Martinique": "MARTINIQUE",
+    "La Réunion": "LA REUNION",
+    "Mayotte": "MAYOTTE",
+    "Saint-Martin": "SAINT-MARTIN"}
 
 @st.cache_resource
 def load_data():
@@ -93,11 +93,11 @@ def get_items(where, group):
     if group:
         if group == "REGIONS":
             items = list(data.groups.keys())
-            for x in OVERSEAS_DEPARTMENTS:
+            for x in OVERSEAS_DEPARTMENTS.values():
                 items.remove(x)
-            items.append("OUTRE-MER")
-        elif group == "OUTRE-MER":
-                items = OVERSEAS_DEPARTMENTS
+            items.append("OVERSEAS DEPARTMENTS")
+        elif group == "OVERSEAS DEPARTMENTS":
+                items = list(OVERSEAS_DEPARTMENTS.keys())
         else:
             data = data.get_group(group)
             items = data.iloc[:,1].unique().tolist()
