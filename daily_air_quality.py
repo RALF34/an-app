@@ -61,11 +61,12 @@ with col1:
         queries.get_items("regions", "REGIONS"),
         **kwargs)
     
+    where = "overseas" if region == "OVERSEAS DEPARTMENTS" else "regions"
     department = st.selectbox(
         "Select a French department",
-        queries.get_items("regions", region),
+        queries.get_items(where, region),
         **kwargs)
-    
+
     city = st.selectbox(
         "Select a French city",
         queries.get_items("departments", department),
@@ -73,7 +74,7 @@ with col1:
     
     stations = queries.get_items("cities", city)
     names_codes = [x.split("&") for x in stations]
-    selected_station = None
+    selected_station, boundaries = None, None
     if stations:
         if len(stations) > 1:
             names = [s[0] for s in names_codes]
@@ -120,7 +121,7 @@ with col2:
                 color="color",
                 zoom=zoom)
 
-if selected_station and boundaries:
+if boundaries:
     y_values = get_values(boundaries)
     if y_values == [None, None]:
         st.error("No pollution data recorded during the given period.")
