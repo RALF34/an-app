@@ -95,11 +95,11 @@ def get_items(where, group):
     if group:
         if group == "REGIONS":
             items = list(data.groups.keys())
-            for x in OVERSEAS_DEPARTMENTS.values():
+            for x in OVERSEAS_DEPARTMENTS:
                 items.remove(x)
             items.append("OVERSEAS DEPARTMENTS")
         elif group == "OVERSEAS DEPARTMENTS":
-                items = list(OVERSEAS_DEPARTMENTS.values())
+                items = OVERSEAS_DEPARTMENTS
         else:
             data = data.get_group(group)
             items = data.iloc[:,1].unique().tolist()
