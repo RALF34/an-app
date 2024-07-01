@@ -103,7 +103,7 @@ with col1:
 
 with col2:
     if (region or (region == "OVERSEAS DEPARTMENTS" and department)):
-        x = None if not(selected_station) else selected_station[0]
+        x = None if not(selected_station) else selected_station
         st.map(
             queries.get_df(
                 region, department, stations, selected_station=x),

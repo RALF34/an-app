@@ -42,6 +42,7 @@ def plot(
             ax.plot(*args, **kargs)
         else:
             ax.scatter(*args, **kargs)
+    WHO_value = WHO_RECOMMENDATIONS[pollutant]
     # Plot a line representing the highest daily average recommended
     # by the World Health Organization.
     ax.plot(
@@ -52,8 +53,9 @@ def plot(
         lw=1.7,
         label="Highest recommended \naverage (WHO)")
     # Split the graph using three air concentration thresholds.
-    WHO_value = WHO_RECOMMENDATIONS[pollutant]
     thresholds = [(2*x/3)*WHO_value for x in range(1,4)]
+    highest_value = max([max(x) for x in values])
+    upper_bound = (highest_value if highest_value > (8/7)*WHO_value else (8/7)*WHO_value)
     colors = ["limegreen","orange","red","magenta"]
     j = 0
     y_min = 0
@@ -73,10 +75,6 @@ def plot(
         color=colors[j],
         alpha=0.1)
     
-    highest_value = max([max(x) for x in values])
-    upper_bound = (
-        highest_value if highest_value > (8/7)*WHO_value else
-        (8/7)*WHO_value)
     ax.set_ylim(0,upper_bound)
     ax.legend(loc="upper right")
     unit = ("m" if pollutant == "CO" else "µ")+"g/m³"

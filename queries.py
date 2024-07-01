@@ -145,11 +145,13 @@ def get_df(region, department, stations, selected_station=None):
         else:
             a = df.index
             if selected_station:
-                color = [green if x==selected_station else red for x in a]
+                s = "&".join(selected_station)
+                color = [green if x==s else red for x in a]
             else:
                 color = [red]*df.shape[0]
-        size = [17]
+        size = [17]*n
     df["color"] = color
+    df["size"] = size
     return df
 
 
