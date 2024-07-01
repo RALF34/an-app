@@ -121,9 +121,11 @@ def get_df(region, department, stations, selected_station=None):
         for x in get_items("regions", region):
             for y in get_items("departments", x):
                 displayed_stations += get_items("cities", y)
-    if region and region == "ILE-DE-FRANCE":
+    if region and (region == "ILE-DE-FRANCE"):
         stations_to_ignore = ["FR38001","FR38002","FR38008"]
-    if department and department == "LA REUNION":
+    if (
+        (region and region == "OVERSEAS DEPARTMENTS") or 
+        (department and department == "LA REUNION")):
         stations_to_ignore = ["FR04058","FR04059"]
     if stations_to_ignore:
         codes, i = [x.split("&")[1] for x in displayed_stations], 0
