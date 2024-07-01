@@ -69,6 +69,7 @@ def load_data():
         "coordinates": coordinates,
         "regions": regions,
         "departments": departments,
+        "cities": cities,
         "overseas": overseas,
         "stations": stations,
         "distribution_pollutants": distribution_pollutants,
